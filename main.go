@@ -13,6 +13,11 @@ import (
 const fileName string = "./commandToTemplate.json"
 
 func main() {
+	Run()
+}
+
+//Run starts the filewatcher.
+func Run() {
 	fileUpdated := make(chan bool)
 	go checkFileUpdated(fileUpdated)
 
@@ -34,7 +39,6 @@ func main() {
 			}
 		}
 	}
-
 }
 
 //JSDONFileToMap Load file, read it's content, parse JSON,
