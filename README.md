@@ -1,6 +1,6 @@
 # go-check-fileChanged
 
-* Checks for json file change.
+* Continously check for json file change.
 * If changed, read and decode json.
 * Put the decoded content into a map.
 
