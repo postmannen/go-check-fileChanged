@@ -24,6 +24,7 @@ func main() {
 //Run starts the filewatcher.
 func Run() {
 	fileUpdated := make(chan bool)
+	var cmdToTplMap map[string]string
 	go checkFileUpdated(fileUpdated)
 
 	for {
@@ -31,14 +32,10 @@ func Run() {
 		case <-fileUpdated:
 			//load file, read it's content, parse JSON,
 			//and return map with parsed values
-			tmpCmdToTplMap, err := readJSONFileToMap(fileName)
+			cmdToTplMap, err := readJSONFileToMap(fileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}
-
-			//TODO: Figure out a way to only update if the
-			//above error check do not fail
-			cmdToTplMap := tmpCmdToTplMap
 
 			if cmdToTplMap != nil {
 				fmt.Println("\nContent of the map unmarshaled from fileContent :")
@@ -52,19 +49,20 @@ func Run() {
 
 //readJSONFileToMap Load file, read it's content, parse JSON,
 //and return map with parsed values.
-func readJSONFileToMap(fileName string) (map[string]string, error) {
+//If it fails at some point, return the current map.
+func readJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
 	cmdToTplMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
 	if err != nil {
 		log.Printf("Failed to open file %v\n", err)
-		return nil, err
+		return currentMap, err
 	}
 
 	fileContent, err := ioutil.ReadAll(f)
 	if err != nil {
 		log.Printf("Failed reading file %v\n", err)
-		return nil, err
+		return currentMap, err
 	}
 
 	fmt.Println("Content read from file : \n", string(fileContent))
@@ -72,7 +70,7 @@ func readJSONFileToMap(fileName string) (map[string]string, error) {
 	err = json.Unmarshal(fileContent, &cmdToTplMap)
 	if err != nil {
 		log.Printf("Failed unmarshaling %v\n", err)
-		return nil, err
+		return currentMap, err
 	}
 
 	return cmdToTplMap, nil
@@ -92,6 +90,7 @@ func checkFileUpdated(fileUpdated chan bool) {
 	go func() {
 		//Give a true value to updated so it reads the file the first time.
 		fileUpdated <- true
+
 		for {
 			select {
 			case event := <-watcher.Events:
