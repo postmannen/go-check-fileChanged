@@ -76,7 +76,7 @@ func readJSONFileToMap(fileName string, currentMap map[string]string) (map[strin
 	return cmdToTplMap, nil
 }
 
-//checkFileUpdated , this is the basically the same code as given as example
+//checkFileUpdated , this is basically the same code as given as example
 //in the fsnotify doc.......with some minor changes.
 func checkFileUpdated(fileUpdated chan bool) {
 	watcher, err := fsnotify.NewWatcher()
