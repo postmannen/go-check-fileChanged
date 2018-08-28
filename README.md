@@ -1,4 +1,4 @@
-# go-check-fileChanged
+# jsonFileToMap
 
 * Continously check for json file change.
 * If changed, read and decode json.
