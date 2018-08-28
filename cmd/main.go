@@ -11,5 +11,6 @@ The package should:
 */
 
 func main() {
+	jsonfiletomap.FileName = "./commandToTemplate2.json"
 	jsonfiletomap.Run()
 }
