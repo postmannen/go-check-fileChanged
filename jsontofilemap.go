@@ -1,9 +1,9 @@
 /*
-Check if file is updated.
+Package jsontofilemap Check if file is updated.
 If the file is updated decode the JSON,
 and put the content in the map.
 */
-package main
+package jsontofilemap
 
 import (
 	"encoding/json"
@@ -15,24 +15,30 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-const fileName string = "./commandToTemplate.json"
+//FileName file to follow
+const FileName string = "./commandToTemplate.json"
 
-func main() {
-	Run()
-}
+//FileUpdated is a channel that will give
+//a value if file is updated.
+var FileUpdated = make(chan bool)
+
+/*
+TODO:
+Make the fileName exportet
+Make the package return the map from a function to be used from main
+*/
 
 //Run starts the filewatcher.
 func Run() {
-	fileUpdated := make(chan bool)
 	var cmdToTplMap map[string]string
-	go checkFileUpdated(fileUpdated)
+	go checkFileUpdated(FileUpdated)
 
 	for {
 		select {
-		case <-fileUpdated:
+		case <-FileUpdated:
 			//load file, read it's content, parse JSON,
 			//and return map with parsed values
-			cmdToTplMap, err := readJSONFileToMap(fileName, cmdToTplMap)
+			cmdToTplMap, err := readJSONFileToMap(FileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}
@@ -107,7 +113,7 @@ func checkFileUpdated(fileUpdated chan bool) {
 		}
 	}()
 
-	err = watcher.Add(fileName)
+	err = watcher.Add(FileName)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,4 +1,4 @@
-# What does this thing do ?
+# What does this package does
 
 * Continously check for json file change.
 * If changed, read and decode json.
