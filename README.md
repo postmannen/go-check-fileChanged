@@ -1,4 +1,4 @@
-# jsonFileToMap
+# What does this thing do ?
 
 * Continously check for json file change.
 * If changed, read and decode json.
