@@ -1,9 +1,9 @@
 /*
-Package jsontofilemap Check if file is updated.
+Package jsonfiletomap Check if file is updated.
 If the file is updated decode the JSON,
 and put the content in the map.
 */
-package jsontofilemap
+package jsonfiletomap
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ import (
 )
 
 //FileName file to follow
-const FileName string = "./commandToTemplate.json"
+var FileName = "./commandToTemplate.json"
 
 //FileUpdated is a channel that will give
 //a value if file is updated.
