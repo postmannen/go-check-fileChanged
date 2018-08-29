@@ -9,19 +9,16 @@ import (
 
 /*
 The package should:
-	- Be started from main
-	- Set the file to watch
-	- Export the map created when the file changed
-	- Export the channel for when the file changed
+	Have a channel "fileupdated"telling if the file was updated
 */
 
 func main() {
 	fileUpdated := make(chan bool)
 	fileName := "commandToTemplate.json"
+	//Start the file watcher
 	jsonfiletomap.Run(fileName, fileUpdated)
 
-	var cmdToTplMap map[string]string
-	//var fileName = "./commandToTemplate.json"
+	cmdToTplMap := jsonfiletomap.NewMap()
 
 	for {
 		select {

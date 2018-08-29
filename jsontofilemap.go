@@ -34,9 +34,15 @@ func Run(fileName string, fileUpdated chan bool) {
 	go checkFileUpdated(fileName, fileUpdated)
 }
 
+//NewMap creates a map to hold all the parsed file values
+func NewMap() map[string]string {
+	m := make(map[string]string)
+	return m
+}
+
 //ReadJSONFileToMap Load file, read it's content, parse JSON,
 //and return map with parsed values.
-//If it fails at some point, return the current map.
+//If it fails at some point then return the current map.
 func ReadJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
 	cmdToTplMap := make(map[string]string)
 
