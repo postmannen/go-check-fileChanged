@@ -15,12 +15,12 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-//FileName file to follow
-var FileName = "./commandToTemplate.json"
+//fileName file to follow
+//var fileName = "./commandToTemplate.json"
 
 //FileUpdated is a channel that will give
 //a value if file is updated.
-var FileUpdated = make(chan bool)
+//var FileUpdated = make(chan bool)
 
 /*
 TODO:
@@ -29,34 +29,15 @@ Make the package return the map from a function to be used from main
 */
 
 //Run starts the filewatcher.
-func Run() {
-	var cmdToTplMap map[string]string
-	go checkFileUpdated(FileUpdated)
-
-	for {
-		select {
-		case <-FileUpdated:
-			//load file, read it's content, parse JSON,
-			//and return map with parsed values
-			cmdToTplMap, err := readJSONFileToMap(FileName, cmdToTplMap)
-			if err != nil {
-				log.Println("file to JSON to map problem : ", err)
-			}
-
-			if cmdToTplMap != nil {
-				fmt.Println("\nContent of the map unmarshaled from fileContent :")
-				for key, value := range cmdToTplMap {
-					log.Println("key = ", key, "value = ", value)
-				}
-			}
-		}
-	}
+func Run(fileName string, fileUpdated chan bool) {
+	//************
+	go checkFileUpdated(fileName, fileUpdated)
 }
 
-//readJSONFileToMap Load file, read it's content, parse JSON,
+//ReadJSONFileToMap Load file, read it's content, parse JSON,
 //and return map with parsed values.
 //If it fails at some point, return the current map.
-func readJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
+func ReadJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
 	cmdToTplMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
@@ -84,7 +65,7 @@ func readJSONFileToMap(fileName string, currentMap map[string]string) (map[strin
 
 //checkFileUpdated , this is basically the same code as given as example
 //in the fsnotify doc.......with some minor changes.
-func checkFileUpdated(fileUpdated chan bool) {
+func checkFileUpdated(fileName string, fileUpdated chan bool) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Println("Failed fsnotify.NewWatcher")
@@ -113,7 +94,7 @@ func checkFileUpdated(fileUpdated chan bool) {
 		}
 	}()
 
-	err = watcher.Add(FileName)
+	err = watcher.Add(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
