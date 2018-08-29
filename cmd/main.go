@@ -1,24 +1,28 @@
+/*
+Example code of how to use the package
+*/
 package main
 
 import (
 	"fmt"
 	"log"
 
-	jftm "github.com/postmannen/jsonfiletomap"
+	"github.com/postmannen/jsonfiletomap"
 )
 
 func main() {
 	fileUpdated := make(chan bool)
-	fileName := "commandToTemplate.json"
+	fileName := "./commandToTemplate.json"
 	//Start the file watcher
-	jftm.Run(fileName, fileUpdated)
+	jsonfiletomap.Run(fileName, fileUpdated)
+	defer jsonfiletomap.Stop()
 
-	cmdToTplMap := jftm.NewMap()
+	cmdToTplMap := jsonfiletomap.NewMap()
 
 	for {
 		select {
 		case <-fileUpdated:
-			cmdToTplMap, err := jftm.ReadJSONFileToMap(fileName, cmdToTplMap)
+			cmdToTplMap, err := jsonfiletomap.Convert(fileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}

@@ -12,10 +12,18 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
+//done is used for stopping the services.
+var done = make(chan bool)
+
 //Run starts the filewatcher.
 func Run(fileName string, fileUpdated chan bool) {
 	//************
 	go checkFileUpdated(fileName, fileUpdated)
+}
+
+//Stop is used to stop all running Go routines
+func Stop() {
+	done <- true
 }
 
 //NewMap creates a map to hold all the parsed file values
@@ -24,11 +32,11 @@ func NewMap() map[string]string {
 	return m
 }
 
-//ReadJSONFileToMap loads the file,
+//Convert loads the file,
 //reads it's content, parse the JSON
 //and returns a new map with the parsed values.
 //If it fails at some point then return the current map.
-func ReadJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
+func Convert(fileName string, currentMap map[string]string) (map[string]string, error) {
 	theMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
@@ -63,7 +71,6 @@ func checkFileUpdated(fileName string, fileUpdated chan bool) {
 	}
 	defer watcher.Close()
 
-	done := make(chan bool)
 	go func() {
 		//Give a true value to updated so it reads the file the first time.
 		fileUpdated <- true
