@@ -7,11 +7,6 @@ import (
 	"github.com/postmannen/jsonfiletomap"
 )
 
-/*
-The package should:
-	Have a channel "fileupdated"telling if the file was updated
-*/
-
 func main() {
 	fileUpdated := make(chan bool)
 	fileName := "commandToTemplate.json"
@@ -23,8 +18,6 @@ func main() {
 	for {
 		select {
 		case <-fileUpdated:
-			//load file, read it's content, parse JSON,
-			//and return map with parsed values
 			cmdToTplMap, err := jsonfiletomap.ReadJSONFileToMap(fileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
