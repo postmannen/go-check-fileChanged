@@ -5,26 +5,12 @@ package jsonfiletomap
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/fsnotify/fsnotify"
 )
-
-//fileName file to follow
-//var fileName = "./commandToTemplate.json"
-
-//FileUpdated is a channel that will give
-//a value if file is updated.
-//var FileUpdated = make(chan bool)
-
-/*
-TODO:
-Make the fileName exportet
-Make the package return the map from a function to be used from main
-*/
 
 //Run starts the filewatcher.
 func Run(fileName string, fileUpdated chan bool) {
@@ -38,11 +24,12 @@ func NewMap() map[string]string {
 	return m
 }
 
-//ReadJSONFileToMap Load file, read it's content, parse JSON,
-//and return map with parsed values.
+//ReadJSONFileToMap loads the file,
+//reads it's content, parse the JSON
+//and returns a new map with the parsed values.
 //If it fails at some point then return the current map.
 func ReadJSONFileToMap(fileName string, currentMap map[string]string) (map[string]string, error) {
-	cmdToTplMap := make(map[string]string)
+	theMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -56,15 +43,14 @@ func ReadJSONFileToMap(fileName string, currentMap map[string]string) (map[strin
 		return currentMap, err
 	}
 
-	fmt.Println("Content read from file : \n", string(fileContent))
-
-	err = json.Unmarshal(fileContent, &cmdToTplMap)
+	err = json.Unmarshal(fileContent, &theMap)
 	if err != nil {
 		log.Printf("Failed unmarshaling %v\n", err)
 		return currentMap, err
 	}
 
-	return cmdToTplMap, nil
+	//If no failures, return the new map.
+	return theMap, nil
 }
 
 //checkFileUpdated , this is basically the same code as given as example
