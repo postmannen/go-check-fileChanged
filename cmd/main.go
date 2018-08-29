@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/postmannen/jsonfiletomap"
+	jftm "github.com/postmannen/jsonfiletomap"
 )
 
 func main() {
 	fileUpdated := make(chan bool)
 	fileName := "commandToTemplate.json"
 	//Start the file watcher
-	jsonfiletomap.Run(fileName, fileUpdated)
+	jftm.Run(fileName, fileUpdated)
 
-	cmdToTplMap := jsonfiletomap.NewMap()
+	cmdToTplMap := jftm.NewMap()
 
 	for {
 		select {
 		case <-fileUpdated:
-			cmdToTplMap, err := jsonfiletomap.ReadJSONFileToMap(fileName, cmdToTplMap)
+			cmdToTplMap, err := jftm.ReadJSONFileToMap(fileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}

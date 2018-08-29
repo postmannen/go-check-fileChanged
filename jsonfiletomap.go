@@ -1,8 +1,6 @@
-/*
-Package jsonfiletomap Check if file is updated.
-If the file is updated decode the JSON,
-and put the content in the map.
-*/
+//Package jsonfiletomap Check if file is updated.
+//If the file is updated decode the JSON,
+//and put the content in the map.
 package jsonfiletomap
 
 import (
