@@ -15,8 +15,8 @@ import (
 //done is used for stopping the services.
 var done = make(chan bool)
 
-//Run starts the filewatcher.
-func Run(fileName string, fileUpdated chan bool) {
+//StartFileWatcher starts the filewatcher.
+func StartFileWatcher(fileName string, fileUpdated chan bool) {
 	//************
 	go checkFileUpdated(fileName, fileUpdated)
 }

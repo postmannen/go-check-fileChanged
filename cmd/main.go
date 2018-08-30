@@ -13,8 +13,9 @@ import (
 func main() {
 	fileUpdated := make(chan bool)
 	fileName := "./commandToTemplate.json"
+
 	//Start the file watcher
-	jsonfiletomap.Run(fileName, fileUpdated)
+	jsonfiletomap.StartFileWatcher(fileName, fileUpdated)
 	defer jsonfiletomap.Stop()
 
 	cmdToTplMap := jsonfiletomap.NewMap()
