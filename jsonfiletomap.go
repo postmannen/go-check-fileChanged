@@ -5,6 +5,7 @@ package jsonfiletomap
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -37,23 +38,21 @@ func NewMap() map[string]string {
 //and returns a new map with the parsed values.
 //If it fails at some point then return the current map.
 func Convert(fileName string, currentMap map[string]string) (map[string]string, error) {
+	fmt.Println("---currentMap = ", currentMap)
 	theMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
 	if err != nil {
-		log.Printf("Failed to open file %v\n", err)
 		return currentMap, err
 	}
 
 	fileContent, err := ioutil.ReadAll(f)
 	if err != nil {
-		log.Printf("Failed reading file %v\n", err)
 		return currentMap, err
 	}
 
 	err = json.Unmarshal(fileContent, &theMap)
 	if err != nil {
-		log.Printf("Failed unmarshaling %v\n", err)
 		return currentMap, err
 	}
 

@@ -23,17 +23,19 @@ func main() {
 	for {
 		select {
 		case <-fileUpdated:
-			cmdToTplMap, err := jsonfiletomap.Convert(fileName, cmdToTplMap)
+			var err error
+			//Convert the file content, and insert into map.
+			//Will return current map if the new one fails.
+			cmdToTplMap, err = jsonfiletomap.Convert(fileName, cmdToTplMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}
 
-			if cmdToTplMap != nil {
-				fmt.Println("\nContent of the map unmarshaled from fileContent :")
-				for key, value := range cmdToTplMap {
-					log.Println("key = ", key, "value = ", value)
-				}
+			fmt.Println("\nContent of the map unmarshaled from fileContent :")
+			for key, value := range cmdToTplMap {
+				log.Println("key = ", key, "value = ", value)
 			}
+
 		}
 	}
 }
