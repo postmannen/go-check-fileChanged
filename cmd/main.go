@@ -39,6 +39,7 @@ func main() {
 			}
 			fmt.Println("----------------------------------------------------------------")
 
+		//Catch the errors from the functions that are Go routines
 		case errF := <-fileError:
 			fmt.Println("---Main: Received on error channel.", errF)
 		}
