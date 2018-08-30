@@ -3,6 +3,7 @@
 * Continously check for json file change.
 * If changed, read and decode json.
 * Put the decoded content into a map.
+* If any operation fails the current working map will be kept, and an error will be printed to console
 
 ## Notes
 
