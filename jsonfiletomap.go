@@ -17,9 +17,9 @@ import (
 var done = make(chan bool)
 
 //StartFileWatcher starts the filewatcher.
-func StartFileWatcher(fileName string, fileUpdated chan bool) {
+func StartFileWatcher(fileName string, fileUpdated chan bool, fileError chan error) {
 	//************
-	go checkFileUpdated(fileName, fileUpdated)
+	go checkFileUpdated(fileName, fileUpdated, fileError)
 }
 
 //Stop is used to stop all running Go routines
@@ -62,7 +62,7 @@ func Convert(fileName string, currentMap map[string]string) (map[string]string, 
 
 //checkFileUpdated , this is basically the same code as given as example
 //in the fsnotify doc.......with some minor changes.
-func checkFileUpdated(fileName string, fileUpdated chan bool) {
+func checkFileUpdated(fileName string, fileUpdated chan bool, fileError chan error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Println("Failed fsnotify.NewWatcher")
@@ -85,14 +85,15 @@ func checkFileUpdated(fileName string, fileUpdated chan bool) {
 					fileUpdated <- true
 				}
 			case err := <-watcher.Errors:
-				log.Println("error:", err)
+				log.Println("pkg:jsonfiletomap checkFileUpdated:", err)
+				fileError <- err
 			}
 		}
 	}()
 
 	err = watcher.Add(fileName)
 	if err != nil {
-		log.Fatal(err)
+		fileError <- err
 	}
 	<-done
 

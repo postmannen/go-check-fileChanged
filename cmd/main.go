@@ -12,10 +12,11 @@ import (
 
 func main() {
 	fileUpdated := make(chan bool)
+	fileError := make(chan error)
 	fileName := "./commandToTemplate.json"
 
 	//Start the file watcher
-	jsonfiletomap.StartFileWatcher(fileName, fileUpdated)
+	jsonfiletomap.StartFileWatcher(fileName, fileUpdated, fileError)
 	defer jsonfiletomap.Stop()
 
 	cmdToTplMap := jsonfiletomap.NewMap()
@@ -31,11 +32,15 @@ func main() {
 				log.Println("file to JSON to map problem : ", err)
 			}
 
-			fmt.Println("\nContent of the map unmarshaled from fileContent :")
+			fmt.Println("----------------------------------------------------------------")
+			fmt.Println("Content of the map unmarshaled from fileContent :")
 			for key, value := range cmdToTplMap {
-				log.Println("key = ", key, "value = ", value)
+				fmt.Println("key = ", key, "value = ", value)
 			}
+			fmt.Println("----------------------------------------------------------------")
 
+		case errF := <-fileError:
+			fmt.Println("---Main: Received on error channel.", errF)
 		}
 	}
 }
