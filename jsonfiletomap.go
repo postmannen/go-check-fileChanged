@@ -1,4 +1,4 @@
-//Package jsonfiletomap Checks if JSON file is updated.
+//Package mapfile Checks if JSON file is updated.
 //If the file is updated then decode the JSON,
 //and put the content in the map.
 //If it at some point fails, the current working map
@@ -62,6 +62,7 @@ func Convert(fileName string, currentMap map[string]string) (map[string]string, 
 		e := fmt.Sprintln("Convert: Keeping current map, file open failed :", err.Error())
 		return currentMap, errors.New(e)
 	}
+	defer f.Close()
 
 	fileContent, err := ioutil.ReadAll(f)
 	if err != nil {
