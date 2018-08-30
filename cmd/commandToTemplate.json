@@ -1,6 +1,9 @@
 {
     "addButton": "buttonTemplate1",
     "addHeader": "socketTemplate1",
-    "addParagraph": "paragraphTemplate1",
-    "addParagraph2": "paragraphTemplate1"
+    "addParagraph1": "paragraphTemplate1",
+    "addParagraph2": "paragraphTemplate2",
+    "addParagraph3": "paragraphTemplate3",
+    "addParagraph4": "paragraphTemplate4",
+    "addParagraph5": "paragraphTemplate5"
 }

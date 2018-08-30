@@ -15,7 +15,7 @@ func main() {
 	d := jsonfiletomap.NewData("./commandToTemplate.json")
 
 	//Start the file watcher
-	jsonfiletomap.StartFileWatcher(d.FileName, d.FileUpdated, d.FileError)
+	jsonfiletomap.StartFileWatcher(d)
 	defer jsonfiletomap.StopFileWatcher()
 
 	for {
@@ -29,17 +29,23 @@ func main() {
 				log.Println("Main :", err)
 			}
 
-			//Print out all the values for testing
-			fmt.Println("----------------------------------------------------------------")
-			fmt.Println("Content of the map unmarshaled from fileContent :")
-			for key, value := range d.AMap {
-				fmt.Println("key = ", key, "value = ", value)
-			}
-			fmt.Println("----------------------------------------------------------------")
+			printMap(d)
 
 		//Catch the errors from the functions that are Go routines
 		case errF := <-d.FileError:
 			fmt.Println("---Main: Received on error channel.", errF)
 		}
 	}
+}
+
+func printMap(d jsonfiletomap.Data) {
+
+	//Print out all the values for testing
+	fmt.Println("----------------------------------------------------------------")
+	fmt.Println("Content of the map unmarshaled from fileContent :")
+	for key, value := range d.AMap {
+		fmt.Println("key = ", key, "value = ", value)
+	}
+	fmt.Println("----------------------------------------------------------------")
+
 }

@@ -18,9 +18,9 @@ import (
 var done = make(chan bool)
 
 //StartFileWatcher starts the filewatcher.
-func StartFileWatcher(fileName string, fileUpdated chan bool, fileError chan error) {
+func StartFileWatcher(d Data) {
 	//************
-	go checkFileUpdated(fileName, fileUpdated, fileError)
+	go checkFileUpdated(d)
 }
 
 //StopFileWatcher is used to stop all running Go routines
@@ -38,8 +38,8 @@ type Data struct {
 
 //NewData creates a data structure for
 //the variables used in the package
-func NewData(fileName string) *Data {
-	return &Data{
+func NewData(fileName string) Data {
+	return Data{
 		FileUpdated: make(chan bool),
 		FileError:   make(chan error),
 		FileName:    fileName,
@@ -79,7 +79,7 @@ func Convert(fileName string, currentMap map[string]string) (map[string]string, 
 
 //checkFileUpdated , this is basically the same code as given as example
 //in the fsnotify doc.......with some minor changes.
-func checkFileUpdated(fileName string, fileUpdated chan bool, fileError chan error) {
+func checkFileUpdated(d Data) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Println("Failed fsnotify.NewWatcher")
@@ -89,7 +89,7 @@ func checkFileUpdated(fileName string, fileUpdated chan bool, fileError chan err
 
 	go func() {
 		//Give a true value to updated so it reads the file the first time.
-		fileUpdated <- true
+		d.FileUpdated <- true
 
 		for {
 			select {
@@ -99,18 +99,18 @@ func checkFileUpdated(fileName string, fileUpdated chan bool, fileError chan err
 					//log.Println("modified file:", event.Name)
 					//testing with an update chan to get updates
 					//instead of just logs
-					fileUpdated <- true
+					d.FileUpdated <- true
 				}
 			case err := <-watcher.Errors:
 				log.Println("pkg:jsonfiletomap checkFileUpdated:", err)
-				fileError <- err
+				d.FileError <- err
 			}
 		}
 	}()
 
-	err = watcher.Add(fileName)
+	err = watcher.Add(d.FileName)
 	if err != nil {
-		fileError <- err
+		d.FileError <- err
 	}
 	<-done
 
