@@ -11,36 +11,34 @@ import (
 )
 
 func main() {
-	fileUpdated := make(chan bool)
-	fileError := make(chan error)
-	fileName := "./commandToTemplate.json"
+	//Create data structure who holds the map and channels
+	d := jsonfiletomap.NewData("./commandToTemplate.json")
 
 	//Start the file watcher
-	jsonfiletomap.StartFileWatcher(fileName, fileUpdated, fileError)
+	jsonfiletomap.StartFileWatcher(d.FileName, d.FileUpdated, d.FileError)
 	defer jsonfiletomap.StopFileWatcher()
-
-	myMap := jsonfiletomap.NewMap()
 
 	for {
 		select {
-		case <-fileUpdated:
+		case <-d.FileUpdated:
 			var err error
 			//Convert the file content, and insert into map.
 			//Will return current map if the new one fails.
-			myMap, err = jsonfiletomap.Convert(fileName, myMap)
+			d.AMap, err = jsonfiletomap.Convert(d.FileName, d.AMap)
 			if err != nil {
-				log.Println("file to JSON to map problem : ", err)
+				log.Println("Main :", err)
 			}
 
+			//Print out all the values for testing
 			fmt.Println("----------------------------------------------------------------")
 			fmt.Println("Content of the map unmarshaled from fileContent :")
-			for key, value := range myMap {
+			for key, value := range d.AMap {
 				fmt.Println("key = ", key, "value = ", value)
 			}
 			fmt.Println("----------------------------------------------------------------")
 
 		//Catch the errors from the functions that are Go routines
-		case errF := <-fileError:
+		case errF := <-d.FileError:
 			fmt.Println("---Main: Received on error channel.", errF)
 		}
 	}

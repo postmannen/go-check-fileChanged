@@ -5,6 +5,7 @@ package jsonfiletomap
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,10 +28,23 @@ func StopFileWatcher() {
 	done <- true
 }
 
-//NewMap creates a map to hold all the parsed file values
-func NewMap() map[string]string {
-	m := make(map[string]string)
-	return m
+//Data holds all the variable types needed for the service
+type Data struct {
+	FileUpdated chan bool
+	FileError   chan error
+	FileName    string
+	AMap        map[string]string
+}
+
+//NewData creates a map to hold all the parsed file values
+func NewData(fileName string) *Data {
+	return &Data{
+		FileUpdated: make(chan bool),
+		FileError:   make(chan error),
+		FileName:    fileName,
+		AMap:        make(map[string]string),
+	}
+
 }
 
 //Convert loads the file,
@@ -38,22 +52,24 @@ func NewMap() map[string]string {
 //and returns a new map with the parsed values.
 //If it fails at some point then return the current map.
 func Convert(fileName string, currentMap map[string]string) (map[string]string, error) {
-	fmt.Println("---currentMap = ", currentMap)
 	theMap := make(map[string]string)
 
 	f, err := os.Open(fileName)
 	if err != nil {
-		return currentMap, err
+		e := fmt.Sprintln("Convert: Keeping current map, file open failed :", err.Error())
+		return currentMap, errors.New(e)
 	}
 
 	fileContent, err := ioutil.ReadAll(f)
 	if err != nil {
-		return currentMap, err
+		e := fmt.Sprintln("Convert: Keeping current map, ReadAll failed :", err.Error())
+		return currentMap, errors.New(e)
 	}
 
 	err = json.Unmarshal(fileContent, &theMap)
 	if err != nil {
-		return currentMap, err
+		e := fmt.Sprintln("Convert: Keeping current map, Unmarshal failed :", err.Error())
+		return currentMap, errors.New(e)
 	}
 
 	//If no failures, return the new map.
