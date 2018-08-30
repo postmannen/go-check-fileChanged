@@ -36,7 +36,8 @@ type Data struct {
 	AMap        map[string]string
 }
 
-//NewData creates a map to hold all the parsed file values
+//NewData creates a data structure for
+//the variables used in the package
 func NewData(fileName string) *Data {
 	return &Data{
 		FileUpdated: make(chan bool),
