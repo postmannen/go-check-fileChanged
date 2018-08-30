@@ -7,16 +7,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/postmannen/jsonfiletomap"
+	"github.com/postmannen/mapfile"
 )
 
 func main() {
 	//Create data structure who holds the map and channels
-	d := jsonfiletomap.NewData("./commandToTemplate.json")
+	d := mapfile.NewData("./commandToTemplate.json")
 
 	//Start the file watcher
-	jsonfiletomap.StartFileWatcher(d)
-	defer jsonfiletomap.StopFileWatcher()
+	mapfile.StartFileWatcher(d)
+	defer mapfile.StopFileWatcher()
 
 	for {
 		select {
@@ -24,7 +24,7 @@ func main() {
 			var err error
 			//Convert the file content, and insert into map.
 			//Will return current map if the new one fails.
-			d.AMap, err = jsonfiletomap.Convert(d.FileName, d.AMap)
+			d.AMap, err = mapfile.Convert(d.FileName, d.AMap)
 			if err != nil {
 				log.Println("Main :", err)
 			}
@@ -38,7 +38,7 @@ func main() {
 	}
 }
 
-func printMap(d jsonfiletomap.Data) {
+func printMap(d mapfile.Data) {
 
 	//Print out all the values for testing
 	fmt.Println("----------------------------------------------------------------")

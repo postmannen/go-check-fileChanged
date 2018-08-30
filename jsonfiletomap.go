@@ -3,7 +3,7 @@
 //and put the content in the map.
 //If it at some point fails, the current working map
 //will be kept.
-package jsonfiletomap
+package mapfile
 
 import (
 	"encoding/json"
