@@ -17,7 +17,7 @@ func main() {
 
 	//Start the file watcher
 	jsonfiletomap.StartFileWatcher(fileName, fileUpdated, fileError)
-	defer jsonfiletomap.Stop()
+	defer jsonfiletomap.StopFileWatcher()
 
 	cmdToTplMap := jsonfiletomap.NewMap()
 

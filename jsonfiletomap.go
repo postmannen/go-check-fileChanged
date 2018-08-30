@@ -22,8 +22,8 @@ func StartFileWatcher(fileName string, fileUpdated chan bool, fileError chan err
 	go checkFileUpdated(fileName, fileUpdated, fileError)
 }
 
-//Stop is used to stop all running Go routines
-func Stop() {
+//StopFileWatcher is used to stop all running Go routines
+func StopFileWatcher() {
 	done <- true
 }
 
