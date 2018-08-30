@@ -19,7 +19,7 @@ func main() {
 	jsonfiletomap.StartFileWatcher(fileName, fileUpdated, fileError)
 	defer jsonfiletomap.StopFileWatcher()
 
-	cmdToTplMap := jsonfiletomap.NewMap()
+	myMap := jsonfiletomap.NewMap()
 
 	for {
 		select {
@@ -27,14 +27,14 @@ func main() {
 			var err error
 			//Convert the file content, and insert into map.
 			//Will return current map if the new one fails.
-			cmdToTplMap, err = jsonfiletomap.Convert(fileName, cmdToTplMap)
+			myMap, err = jsonfiletomap.Convert(fileName, myMap)
 			if err != nil {
 				log.Println("file to JSON to map problem : ", err)
 			}
 
 			fmt.Println("----------------------------------------------------------------")
 			fmt.Println("Content of the map unmarshaled from fileContent :")
-			for key, value := range cmdToTplMap {
+			for key, value := range myMap {
 				fmt.Println("key = ", key, "value = ", value)
 			}
 			fmt.Println("----------------------------------------------------------------")
