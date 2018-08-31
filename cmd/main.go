@@ -32,6 +32,9 @@ func main() {
 				fmt.Println("No FileWatch Error: ", u)
 
 				aMap, err = fw.Convert(aMap)
+				if err != nil {
+					log.Println("Error: ", err)
+				}
 
 				printMap(aMap)
 			} else {
