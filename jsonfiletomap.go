@@ -12,10 +12,63 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 )
 
+//Update holds the info about how the file watching are going
+type Update struct {
+	Time time.Time
+	Err  error
+}
+
+//FileWatcher will
+type FileWatcher struct {
+	name      string
+	Updates   chan Update
+	fsWatcher *fsnotify.Watcher
+}
+
+//New create a new FileWatcher struct
+func New(fileName string, updates chan Update) (*FileWatcher, error) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return nil, errors.New("unable to start fsnotify watcher")
+	}
+
+	return &FileWatcher{fileName, updates, watcher}, nil
+}
+
+//Watch will check the file
+func (fw *FileWatcher) Watch() error {
+	err := fw.fsWatcher.Add(fw.name)
+	if err != nil {
+		return fmt.Errorf("unable to start watching %s", fw.name)
+	}
+
+	go func() {
+		for {
+			select {
+			case event := <-fw.fsWatcher.Events:
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					fw.Updates <- Update{Time: time.Now(), Err: nil}
+				}
+			case err := <-fw.fsWatcher.Errors:
+				fw.Updates <- Update{Time: time.Now(), Err: err}
+			}
+		}
+	}()
+
+	return nil
+}
+
+//Close for closing down the file watcher
+func (fw *FileWatcher) Close() error {
+	return fw.fsWatcher.Close()
+}
+
+//------------------------------------------------------
 //done is used for stopping the services.
 var done = make(chan bool)
 
@@ -48,36 +101,6 @@ func NewData(fileName string) Data {
 		AMap:        make(map[string]string),
 	}
 
-}
-
-//Convert loads the file,
-//reads it's content, parse the JSON
-//and returns a new map with the parsed values.
-//If it fails at some point then return the current map.
-func Convert(fileName string, currentMap map[string]string) (map[string]string, error) {
-	theMap := make(map[string]string)
-
-	f, err := os.Open(fileName)
-	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, file open failed :", err.Error())
-		return currentMap, errors.New(e)
-	}
-	defer f.Close()
-
-	fileContent, err := ioutil.ReadAll(f)
-	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, ReadAll failed :", err.Error())
-		return currentMap, errors.New(e)
-	}
-
-	err = json.Unmarshal(fileContent, &theMap)
-	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, Unmarshal failed :", err.Error())
-		return currentMap, errors.New(e)
-	}
-
-	//If no failures, return the new map.
-	return theMap, nil
 }
 
 //checkFileUpdated , this is basically the same code as given as example
@@ -118,4 +141,34 @@ func checkFileUpdated(d Data) {
 	<-done
 
 	return
+}
+
+//Convert loads the file,
+//reads it's content, parse the JSON
+//and returns a new map with the parsed values.
+//If it fails at some point then return the current map.
+func Convert(fileName string, currentMap map[string]string) (map[string]string, error) {
+	theMap := make(map[string]string)
+
+	f, err := os.Open(fileName)
+	if err != nil {
+		e := fmt.Sprintln("Convert: Keeping current map, file open failed :", err.Error())
+		return currentMap, errors.New(e)
+	}
+	defer f.Close()
+
+	fileContent, err := ioutil.ReadAll(f)
+	if err != nil {
+		e := fmt.Sprintln("Convert: Keeping current map, ReadAll failed :", err.Error())
+		return currentMap, errors.New(e)
+	}
+
+	err = json.Unmarshal(fileContent, &theMap)
+	if err != nil {
+		e := fmt.Sprintln("Convert: Keeping current map, Unmarshal failed :", err.Error())
+		return currentMap, errors.New(e)
+	}
+
+	//If no failures, return the new map.
+	return theMap, nil
 }
