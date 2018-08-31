@@ -1,11 +1,11 @@
-# What does this package does
+# What does this package do
 
 * Continously check for json file change.
 * If changed, read and decode json.
 * Put the decoded content into a map.
 * If any operation fails the current working map will be kept, and an error will be printed to console
 
-Example of how to use can be found under ./cmd/
+Example of how to use can be found under ./cmd/main.go
 
 ## Notes
 

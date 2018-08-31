@@ -16,13 +16,15 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-//Update holds the info about how the file watching are going
+//Update holds the info used in channel of
+//how the file watching are going.
 type Update struct {
 	Time time.Time
 	Err  error
 }
 
-//FileWatcher will
+//FileWatcher holds the variables for the
+//Watcher service
 type FileWatcher struct {
 	name      string
 	Updates   chan Update
