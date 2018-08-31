@@ -85,21 +85,18 @@ func (fw *FileWatcher) Convert(currentMap map[string]string) (map[string]string,
 
 	f, err := os.Open(fw.name)
 	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, file open failed :", err.Error())
-		return currentMap, errors.New(e)
+		return currentMap, fmt.Errorf("Convert: Keeping current map, file open failed :%v", err.Error())
 	}
 	defer f.Close()
 
 	fileContent, err := ioutil.ReadAll(f)
 	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, ReadAll failed :", err.Error())
-		return currentMap, errors.New(e)
+		return currentMap, fmt.Errorf("Convert: Keeping current map, ReadAll failed :%v", err.Error())
 	}
 
 	err = json.Unmarshal(fileContent, &theMap)
 	if err != nil {
-		e := fmt.Sprintln("Convert: Keeping current map, Unmarshal failed :", err.Error())
-		return currentMap, errors.New(e)
+		return currentMap, fmt.Errorf("Convert: Keeping current map, Unmarshal failed :%v", err.Error())
 	}
 
 	//If no failures, return the new map.
