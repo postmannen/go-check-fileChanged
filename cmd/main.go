@@ -12,6 +12,7 @@ import (
 
 func main() {
 	updates := make(chan mapfile.Update)
+	defer close(updates)
 
 	fw, err := mapfile.New("commandToTemplate.json", updates)
 	if err != nil {
