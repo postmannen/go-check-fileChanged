@@ -24,6 +24,8 @@ func main() {
 		log.Println("Main: Failed to Watch: ", err)
 	}
 
+	defer fw.Close()
+
 	aMap := make(map[string]string)
 
 	for {
