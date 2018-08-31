@@ -25,7 +25,11 @@ func main() {
 	for {
 		select {
 		case u := <-fw.Updates:
-			fmt.Println(u)
+			if err == nil {
+				fmt.Println("No Error: ", u)
+			} else {
+				fmt.Println("Error: ", u)
+			}
 		}
 	}
 
